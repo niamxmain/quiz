@@ -60,18 +60,41 @@ class QuizController extends Controller
 
     /**
      * Show the form for editing the specified resource.
+     *
+     * @param  \App\Models\Quiz  $quiz
+     * @return \Illuminate\View\View
      */
     public function edit(Quiz $quiz)
     {
+        // Kode ini akan mengambil data kuis berdasarkan ID di URL
+        // dan mengirimkannya ke view 'quizzes.edit'
         return view('quizzes.edit', compact('quiz'));
     }
 
     /**
      * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Quiz  $quiz
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Quiz $quiz)
     {
-        //
+        // 1. Validasi input dari form
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'duration' => 'required|integer|min:1',
+        ]);
+
+        // 2. Buat slug baru dari judul
+        $validatedData['slug'] = Str::slug($validatedData['title']);
+
+        // 3. Update data kuis di database
+        $quiz->update($validatedData);
+
+        // 4. Redirect kembali ke halaman daftar kuis dengan pesan sukses
+        return redirect()->route('quizzes.index')->with('success', 'Kuis berhasil diperbarui!');
     }
 
     /**
