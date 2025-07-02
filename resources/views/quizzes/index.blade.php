@@ -49,7 +49,7 @@
                                         0
                                     </td>
                                     <td class="px-6 py-4 text-right">
-                                        <a href="#" class="font-medium text-indigo-600 hover:underline">Edit</a>
+                                        <a href="{{ route('quizzes.edit', $quiz) }}" class="font-medium text-indigo-600 hover:underline">Edit</a>
                                         <a href="#" class="font-medium text-red-600 hover:underline ml-4">Hapus</a>
                                     </td>
                                 </tr>
