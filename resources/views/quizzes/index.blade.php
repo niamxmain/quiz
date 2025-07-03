@@ -7,7 +7,7 @@
 
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-4">
     @if (session('success'))
-        <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-100" role="alert">
+        <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-100" id="success-alert" role="alert">
             {{ session('success') }}
         </div>
     @endif
@@ -50,7 +50,13 @@
                                     </td>
                                     <td class="px-6 py-4 text-right">
                                         <a href="{{ route('quizzes.edit', $quiz) }}" class="font-medium text-indigo-600 hover:underline">Edit</a>
-                                        <a href="#" class="font-medium text-red-600 hover:underline ml-4">Hapus</a>
+<form action="{{ route('quizzes.destroy', $quiz) }}" method="POST" class="inline">
+    @csrf
+    @method('DELETE')
+    <button type="submit" class="font-medium text-red-600 hover:underline ml-4" onclick="return confirm('Apakah Anda yakin ingin menghapus kuis ini?')">
+        Hapus
+    </button>
+</form>
                                     </td>
                                 </tr>
                                 @empty
@@ -73,3 +79,24 @@
         </div>
     </div>
 </x-app-layout>
+
+<script>
+    // Cari elemen alert berdasarkan ID yang kita buat
+    const successAlert = document.getElementById('success-alert');
+
+    // Jika elemen tersebut ada di halaman
+    if (successAlert) {
+        // Atur waktu (dalam milidetik) sebelum alert hilang
+        // 3000ms = 3 detik
+        setTimeout(() => {
+            // Mulai transisi fade-out
+            successAlert.style.transition = 'opacity 0.5s ease';
+            successAlert.style.opacity = '0';
+
+            // Setelah transisi selesai, sembunyikan elemen sepenuhnya
+            setTimeout(() => {
+                successAlert.style.display = 'none';
+            }, 500); // 500ms cocok dengan durasi transisi
+        }, 3000);
+    }
+</script>

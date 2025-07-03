@@ -100,8 +100,12 @@ class QuizController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        //
-    }
+    public function destroy(Quiz $quiz)
+{
+    // Hapus kuis dari database
+    $quiz->delete();
+
+    // Redirect kembali dengan pesan sukses
+    return redirect()->route('quizzes.index')->with('success', 'Kuis berhasil dihapus!');
+}
 }
