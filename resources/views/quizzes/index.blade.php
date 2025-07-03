@@ -37,8 +37,10 @@
                                 @forelse ($quizzes as $quiz)
                                 <tr class="bg-white border-b hover:bg-gray-50">
                                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                                        {{ $quiz->title }}
-                                    </th>
+    <a href="{{ route('quizzes.show', $quiz) }}" class="hover:underline">
+        {{ $quiz->title }}
+    </a>
+</th>
                                     <td class="px-6 py-4">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $quiz->status == 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
                                             {{ ucfirst($quiz->status) }}

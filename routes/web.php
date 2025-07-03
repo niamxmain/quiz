@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuizController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\QuestionController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -18,6 +19,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('quizzes', QuizController::class);
+
+    Route::get('/quizzes/{quiz}/questions/create', [QuestionController::class, 'create'])->name('questions.create');
+    Route::post('/quizzes/{quiz}/questions', [QuestionController::class, 'store'])->name('questions.store');
 });
 
 require __DIR__.'/auth.php';

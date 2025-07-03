@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Quiz extends Model
 {
@@ -19,4 +20,9 @@ class Quiz extends Model
         // 'user_id' tidak perlu ada di sini karena sudah diisi otomatis
         // melalui relasi saat kita menggunakan Auth::user()->quizzes()->create().
     ];
+
+    public function questions(): HasMany
+{
+    return $this->hasMany(Question::class);
+}
 }

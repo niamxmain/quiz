@@ -53,10 +53,15 @@ class QuizController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
-        //
-    }
+    public function show(Quiz $quiz)
+{
+    // Mengambil semua pertanyaan yang terhubung dengan kuis ini
+    // Kita akan menggunakan relasi nanti agar lebih rapi
+    $questions = $quiz->questions()->paginate(10);
+
+    return view('quizzes.show', compact('quiz', 'questions'));
+}
+
 
     /**
      * Show the form for editing the specified resource.
