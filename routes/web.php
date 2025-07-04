@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuizController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\QuizAttemptController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -23,5 +24,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/quizzes/{quiz}/questions/create', [QuestionController::class, 'create'])->name('questions.create');
     Route::post('/quizzes/{quiz}/questions', [QuestionController::class, 'store'])->name('questions.store');
 });
+
+Route::get('/attempt/{quiz:slug}', [QuizAttemptController::class, 'start'])->name('quiz.start');
+Route::post('/attempt/{quiz:slug}', [QuizAttemptController::class, 'attempt'])->name('quiz.attempt');
+Route::get('/attempt/{quiz:slug}/question/{question_number}', [QuizAttemptController::class, 'showQuestion'])->name('quiz.question');
 
 require __DIR__.'/auth.php';
