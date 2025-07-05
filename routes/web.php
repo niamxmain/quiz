@@ -28,5 +28,7 @@ Route::middleware('auth')->group(function () {
 Route::get('/attempt/{quiz:slug}', [QuizAttemptController::class, 'start'])->name('quiz.start');
 Route::post('/attempt/{quiz:slug}', [QuizAttemptController::class, 'attempt'])->name('quiz.attempt');
 Route::get('/attempt/{quiz:slug}/question/{question_number}', [QuizAttemptController::class, 'showQuestion'])->name('quiz.question');
+Route::post('/attempt/{quiz:slug}/question/{question_number}', [QuizAttemptController::class, 'storeAnswer'])->name('quiz.answer.store');
+Route::get('/attempt/{quiz:slug}/result', [QuizAttemptController::class, 'showResult'])->name('quiz.result');
 
 require __DIR__.'/auth.php';

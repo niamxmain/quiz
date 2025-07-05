@@ -20,7 +20,7 @@
             <div class="border-t pt-6">
                 <p class="text-lg font-semibold mb-4">{{ $question->question_text }}</p>
 
-                <form action="#" method="POST">
+                <form action="{{ route('quiz.answer.store', ['quiz' => $quiz, 'question_number' => $question_number]) }}" method="POST">
                     @csrf
                     <div class="space-y-4">
                         @foreach ($question->options->shuffle() as $option)
@@ -41,4 +41,35 @@
         </div>
     </div>
 </body>
+
+<script>
+    // Ambil waktu selesai dari session (dibuat saat attempt dimulai)
+    const quizDuration = {{ $quiz->duration }}; // dalam menit
+    const attemptStartedAt = '{{ session("quiz_attempt.started_at", now()) }}';
+
+    const endTime = new Date(attemptStartedAt).getTime() + quizDuration * 60 * 1000;
+
+    const timerElement = document.getElementById('timer');
+    const quizForm = document.querySelector('form');
+
+    const countdown = setInterval(function() {
+        const now = new Date().getTime();
+        const distance = endTime - now;
+
+        // Perhitungan waktu
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        // Tampilkan di elemen timer
+        timerElement.textContent = String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0');
+
+        // Jika waktu habis
+        if (distance < 0) {
+            clearInterval(countdown);
+            timerElement.textContent = "WAKTU HABIS";
+            // Otomatis submit form
+            quizForm.submit();
+        }
+    }, 1000);
+</script>
 </html>
