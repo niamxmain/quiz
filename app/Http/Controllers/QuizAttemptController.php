@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Quiz;
 use App\Models\Question;
+use App\Models\Option;
+use App\Models\QuizAttempt;
 use Carbon\Carbon;
 
 
@@ -105,7 +107,46 @@ public function storeAnswer(Request $request, Quiz $quiz, $question_number)
 
 public function showResult(Quiz $quiz)
 {
-    // Logika untuk menghitung skor akan kita tambahkan di sini nanti
-    dd(session('quiz_attempt')); // 'dd' adalah "dump and die", untuk melihat isi session
+    // 1. Ambil data dari session
+    $sessionData = session('quiz_attempt');
+
+    // Jika tidak ada session, kembali ke awal
+    if (!$sessionData) {
+        return redirect()->route('quiz.start', $quiz);
+    }
+
+    // 2. Ambil semua jawaban yang benar untuk kuis ini
+    $correctAnswers = Option::whereIn('question_id', $sessionData['question_ids'])
+                            ->where('is_correct', true)
+                            ->pluck('id') // Ambil ID pilihan jawaban yang benar
+                            ->toArray();
+
+    // 3. Hitung jawaban yang benar dari siswa
+    $score = 0;
+    $studentAnswers = $sessionData['answers'];
+    foreach ($studentAnswers as $questionId => $optionId) {
+        if (in_array($optionId, $correctAnswers)) {
+            $score++;
+        }
+    }
+
+    // 4. Hitung skor akhir (misal: (jawaban benar / total soal) * 100)
+    $totalQuestions = count($sessionData['question_ids']);
+    $finalScore = ($totalQuestions > 0) ? round(($score / $totalQuestions) * 100) : 0;
+
+    // 5. Update catatan percobaan kuis di database
+    $attempt = QuizAttempt::find($sessionData['attempt_id']);
+    if ($attempt) {
+        $attempt->update([
+            'score' => $finalScore,
+            'finished_at' => now(),
+        ]);
+    }
+
+    // 6. Hapus session kuis
+    session()->forget('quiz_attempt');
+
+    // 7. Tampilkan halaman hasil
+    return view('quiz_attempts.result', compact('quiz', 'finalScore', 'totalQuestions', 'score'));
 }
 }
