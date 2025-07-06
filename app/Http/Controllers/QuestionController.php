@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Quiz;
+use App\Models\Question;
+use App\Models\Option;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -16,41 +18,78 @@ class QuestionController extends Controller
 
     public function store(Request $request, Quiz $quiz)
     {
-        // 3. Validasi data yang masuk
         $request->validate([
             'question_text' => 'required|string|min:3',
-            'options' => 'required|array|min:4', // Pastikan ada 4 opsi
-            'options.*' => 'required|string|min:1', // Setiap opsi harus diisi
-            'correct_option' => 'required|integer|between:0,3', // Pastikan radio button dipilih
+            'options' => 'required|array|min:4',
+            'options.*' => 'required|string|min:1',
+            'correct_option' => 'required|integer|between:0,3',
         ]);
 
-        // 4. Mulai Database Transaction
         DB::beginTransaction();
         try {
-            // 5. Simpan Pertanyaan
             $question = $quiz->questions()->create([
                 'question_text' => $request->question_text,
             ]);
 
-            // 6. Simpan Pilihan Jawaban
             foreach ($request->options as $index => $optionText) {
                 $question->options()->create([
                     'option_text' => $optionText,
                     'is_correct' => ($index == $request->correct_option),
                 ]);
             }
-
-            // 7. Jika semua berhasil, konfirmasi transaksi
             DB::commit();
-
         } catch (Throwable $e) {
-            // 8. Jika ada error, batalkan semua yang sudah disimpan
             DB::rollBack();
-            // Optional: catat error atau tampilkan pesan error yang lebih spesifik
-            return back()->with('error', 'Terjadi kesalahan saat menyimpan pertanyaan.');
+            return back()->with('error', 'Terjadi kesalahan saat menyimpan pertanyaan: ' . $e->getMessage());
         }
 
-        // 9. Redirect kembali ke halaman detail kuis dengan pesan sukses
         return redirect()->route('quizzes.show', $quiz)->with('success', 'Pertanyaan berhasil ditambahkan!');
+    }
+
+    public function edit(Question $question)
+    {
+        $question->load('options');
+        return view('questions.edit', compact('question'));
+    }
+
+    public function update(Request $request, Question $question)
+    {
+        $request->validate([
+            'question_text' => 'required|string|min:3',
+            'options' => 'required|array|min:4',
+            'options.*' => 'required|string|min:1',
+            'option_ids' => 'required|array|min:4',
+            'correct_option' => 'required|integer|exists:options,id',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $question->update([
+                'question_text' => $request->question_text,
+            ]);
+
+            foreach ($request->option_ids as $index => $option_id) {
+                $option = Option::find($option_id);
+                if ($option) {
+                    $option->update([
+                        'option_text' => $request->options[$index],
+                        'is_correct' => ($option_id == $request->correct_option),
+                    ]);
+                }
+            }
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollBack();
+            return back()->with('error', 'Terjadi kesalahan saat memperbarui pertanyaan: ' . $e->getMessage());
+        }
+
+        return redirect()->route('quizzes.show', $question->quiz_id)->with('success', 'Pertanyaan berhasil diperbarui!');
+    }
+
+    public function destroy(Question $question)
+    {
+        $quizId = $question->quiz_id;
+        $question->delete();
+        return redirect()->route('quizzes.show', $quizId)->with('success', 'Pertanyaan berhasil dihapus!');
     }
 }
