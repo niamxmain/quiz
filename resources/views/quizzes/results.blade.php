@@ -32,7 +32,11 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         {{-- Format tanggal agar mudah dibaca --}}
-                                        {{ \Carbon\Carbon::parse($attempt->finished_at)->translatedFormat('d F Y, H:i') }}
+                                        @if ($attempt->finished_at)
+    {{ $attempt->finished_at->translatedFormat('d F Y, H:i') }}
+@else
+    <span class="text-gray-400">Belum Selesai</span>
+@endif
                                     </td>
                                 </tr>
                                 @empty

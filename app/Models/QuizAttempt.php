@@ -16,4 +16,14 @@ class QuizAttempt extends Model
         'started_at',
         'finished_at',
     ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'finished_at' => 'datetime',
+        'started_at' => 'datetime',
+    ];
 }
