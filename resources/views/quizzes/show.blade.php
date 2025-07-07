@@ -24,6 +24,7 @@
                     <h3 class="text-lg font-medium mb-2">Deskripsi Kuis</h3>
                     <p class="mb-4">{{ $quiz->description ?: 'Tidak ada deskripsi.' }}</p>
                     <p class="text-sm text-gray-600">Durasi: {{ $quiz->duration }} menit</p>
+                    <p class="text-sm text-gray-600 mt-1">Jumlah Soal: {{ $quiz->questions->count() }}</p>
                     <hr class="my-6">
 
                     <div class="flex justify-between items-center mb-4">

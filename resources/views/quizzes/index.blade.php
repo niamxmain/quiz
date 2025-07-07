@@ -47,8 +47,7 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4">
-                                        {{-- Nanti kita isi dengan jumlah soal --}}
-                                        0
+                                        {{ $quiz->questions_count }}
                                     </td>
                                     <td class="px-6 py-4 text-right">
                                         <a href="{{ route('quizzes.edit', $quiz) }}" class="font-medium text-indigo-600 hover:underline">Edit</a>
