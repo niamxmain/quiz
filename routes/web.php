@@ -23,6 +23,7 @@ Route::middleware('auth')->group(function () {
 
     // Rute Kuis
     Route::resource('quizzes', QuizController::class);
+    Route::get('/quizzes/{quiz}/results', [QuizController::class, 'results'])->name('quizzes.results');
 
     // Rute Pertanyaan (Nested)
     Route::get('/quizzes/{quiz}/questions/create', [QuestionController::class, 'create'])->name('questions.create');

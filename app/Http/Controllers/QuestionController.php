@@ -92,4 +92,5 @@ class QuestionController extends Controller
         $question->delete();
         return redirect()->route('quizzes.show', $quizId)->with('success', 'Pertanyaan berhasil dihapus!');
     }
+
 }

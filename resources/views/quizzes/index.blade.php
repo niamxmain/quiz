@@ -50,6 +50,7 @@
                                         {{ $quiz->questions_count }}
                                     </td>
                                     <td class="px-6 py-4 text-right">
+                                        <a href="{{ route('quizzes.results', $quiz) }}" class="font-medium text-blue-600 hover:underline">Hasil</a>
                                         <a href="{{ route('quizzes.edit', $quiz) }}" class="font-medium text-indigo-600 hover:underline">Edit</a>
 <form action="{{ route('quizzes.destroy', $quiz) }}" method="POST" class="inline">
     @csrf

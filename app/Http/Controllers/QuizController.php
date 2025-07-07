@@ -114,4 +114,15 @@ class QuizController extends Controller
     // Redirect kembali dengan pesan sukses
     return redirect()->route('quizzes.index')->with('success', 'Kuis berhasil dihapus!');
 }
+
+public function results(Quiz $quiz)
+{
+    // Ambil semua percobaan/hasil yang terkait dengan kuis ini,
+    // urutkan dari yang terbaru, dan paginasi hasilnya.
+    $attempts = $quiz->quizAttempts()
+                     ->latest()
+                     ->paginate(20);
+
+    return view('quizzes.results', compact('quiz', 'attempts'));
+}
 }
